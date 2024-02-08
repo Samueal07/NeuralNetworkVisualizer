@@ -11,12 +11,14 @@ class Car {
     this.friction = 0.05;
     // making this because we are getting speed>3 when going diagonally
     this.angle = 0;
-
+    // making an instance of class Sensor
+    this.sensor = new Sensor(this);
     this.controls = new Controls();
   }
 
   update() {
     this.#move();
+    this.sensor.update();
   }
 
   #move() {
@@ -77,5 +79,6 @@ class Car {
     ctx.fill();
 
     ctx.restore();
+    this.sensor.draw(ctx);
   }
 }
