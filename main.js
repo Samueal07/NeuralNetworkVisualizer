@@ -14,7 +14,8 @@ car.draw(ctx);
 animate();
 function animate() {
   // calling it again and again so that it rerenders its position
-  car.update();
+  // prop dirlling till sensor.js main->car->sensor->castRays
+  car.update(road.borders);
 
   canvas.height = window.innerHeight;
 

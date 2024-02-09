@@ -5,8 +5,47 @@ class Sensor {
     this.rayLength = 150;
     this.raySpread = Math.PI / 2;
     this.rays = [];
+    //dist from the Boarders of Road
+    this.readings = [];
   }
-  update() {
+  update(roadBoarders) {
+    this.#castRays();
+    this.readings = [];
+    for (let i = 0; i < this.rays.length; i++) {
+      this.readings.push(this.#getReading(this.rays[i], roadBoarders));
+    }
+  }
+  // checking if boarders and sensor LOS intersect
+  #getReading(ray, roadBoarders) {
+    let touches = [];
+    // going through all borders 2 in this case
+    for (let i = 0; i < roadBoarders.length; i++) {
+      // this function returns the intersection point and offset of how far border is from center of car
+      const touch = getIntersection(
+        // start 2 are ray segment
+        // last 2 are border segment
+        ray[0],
+        ray[1],
+        roadBoarders[i][0],
+        roadBoarders[i][1]
+      );
+      if (touch) {
+        touches.push(touch);
+      }
+    }
+
+    if (touches.length == 0) {
+      return null;
+    } else {
+      // getting it from return statement of getIntersection
+      const offsets = touches.map((e) => e.offset);
+      // we want the border/obstruction thats the closest to car
+      const minOffset = Math.min(...offsets);
+      //return touch of min offset
+      return touches.find((e) => e.offset == minOffset);
+    }
+  }
+  #castRays() {
     this.rays = [];
     // populating rays
     for (let i = 0; i < this.rayCount; i++) {
@@ -35,11 +74,27 @@ class Sensor {
     for (let i = 0; i < this.rayCount; i++) {
       // Check if this.rays[i] is defined before attempting to access its properties
       if (this.rays[i]) {
+        let end = this.rays[i][1];
+        //adjust the end of the sensor segment line to the neaest offset
+        if (this.readings[i]) {
+          end = this.readings[i];
+        }
+
         ctx.beginPath();
         ctx.lineWidth = 2;
         ctx.strokeStyle = "yellow";
         ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y);
-        ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y);
+        // ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+
+        // seeing where it Collides
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "black";
+        ctx.moveTo(this.rays[i][1].x, this.rays[i][1].y);
+        // ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y);
+        ctx.lineTo(end.x, end.y);
         ctx.stroke();
       }
     }

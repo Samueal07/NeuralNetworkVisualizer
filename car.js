@@ -16,9 +16,9 @@ class Car {
     this.controls = new Controls();
   }
 
-  update() {
+  update(roadBoarders) {
     this.#move();
-    this.sensor.update();
+    this.sensor.update(roadBoarders);
   }
 
   #move() {
