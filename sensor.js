@@ -8,15 +8,15 @@ class Sensor {
     //dist from the Boarders of Road
     this.readings = [];
   }
-  update(roadBoarders) {
+  update(roadBoarders, traffic) {
     this.#castRays();
     this.readings = [];
     for (let i = 0; i < this.rays.length; i++) {
-      this.readings.push(this.#getReading(this.rays[i], roadBoarders));
+      this.readings.push(this.#getReading(this.rays[i], roadBoarders, traffic));
     }
   }
   // checking if boarders and sensor LOS intersect
-  #getReading(ray, roadBoarders) {
+  #getReading(ray, roadBoarders, traffic) {
     let touches = [];
     // going through all borders 2 in this case
     for (let i = 0; i < roadBoarders.length; i++) {
@@ -31,6 +31,21 @@ class Sensor {
       );
       if (touch) {
         touches.push(touch);
+      }
+    }
+    // this is if the sensor detects the car
+    for (let i = 0; i < traffic.length; i++) {
+      const poly = traffic[i].polygon;
+      for (let j = 0; j < poly.length; j++) {
+        const value = getIntersection(
+          ray[0],
+          ray[1],
+          poly[j],
+          poly[(j + 1) % poly.length]
+        );
+        if (value) {
+          touches.push(value);
+        }
       }
     }
 
