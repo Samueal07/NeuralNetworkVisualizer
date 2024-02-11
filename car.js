@@ -11,10 +11,15 @@ class Car {
     this.friction = 0.05;
     // making this because we are getting speed>3 when going diagonally
     this.angle = 0;
+    this.useBrain = controlType === "AI";
 
-    if (controlType === "KEYS") {
+    if (controlType != "DUMMY") {
       // making an instance of class Sensor
       this.sensor = new Sensor(this);
+      // first layer has neuron=no of sensor
+      // 1 hidden layer with 6 neuron
+      // 1 output layer with 4 nwuron left,right,top,down
+      this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
     }
     this.controls = new Controls(controlType);
 
@@ -29,6 +34,21 @@ class Car {
     }
     if (this.sensor) {
       this.sensor.update(roadBoarders, traffic);
+      const offsets = this.sensor.readings.map(
+        // if their isnt anything in way of sensor keep value as zero
+        // else deduct the offset value from 1
+        (s) => (s == null ? 0 : 1 - s.offsets)
+      );
+      const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+      console.log(outputs);
+      // in console car.brain gives full info
+
+      if (this.useBrain) {
+        this.controls.forward = outputs[0];
+        this.controls.left = outputs[1];
+        this.controls.right = outputs[2];
+        this.controls.reverse = outputs[3];
+      }
     }
   }
 
