@@ -6,9 +6,12 @@ class Visualizer {
     const width = ctx.canvas.width - margin * 2;
     const height = ctx.canvas.height - margin * 2;
 
+    // Calculate the height of each level in the network
     const levelHeight = height / network.levels.length;
 
+    // Iterate through network levels in reverse order (from output to input)
     for (let i = network.levels.length - 1; i >= 0; i--) {
+      // Calculate the top position of the current level
       const levelTop =
         top +
         lerp(
@@ -17,6 +20,7 @@ class Visualizer {
           network.levels.length == 1 ? 0.5 : i / (network.levels.length - 1)
         );
 
+      // Draw the current level on the canvas
       ctx.setLineDash([7, 3]);
       Visualizer.drawLevel(
         ctx,
@@ -36,6 +40,7 @@ class Visualizer {
 
     const { inputs, outputs, weights, biases } = level;
 
+    // Draw connections between input and output nodes
     for (let i = 0; i < inputs.length; i++) {
       for (let j = 0; j < outputs.length; j++) {
         ctx.beginPath();
@@ -48,6 +53,8 @@ class Visualizer {
     }
 
     const nodeRadius = 18;
+
+    // Draw input nodes
     for (let i = 0; i < inputs.length; i++) {
       const x = Visualizer.#getNodeX(inputs, i, left, right);
       ctx.beginPath();
@@ -60,6 +67,7 @@ class Visualizer {
       ctx.fill();
     }
 
+    // Draw output nodes
     for (let i = 0; i < outputs.length; i++) {
       const x = Visualizer.#getNodeX(outputs, i, left, right);
       ctx.beginPath();
@@ -71,6 +79,7 @@ class Visualizer {
       ctx.fillStyle = getRGBA(outputs[i]);
       ctx.fill();
 
+      // Draw bias circle around the output node
       ctx.beginPath();
       ctx.lineWidth = 2;
       ctx.arc(x, top, nodeRadius * 0.8, 0, Math.PI * 2);
@@ -79,6 +88,7 @@ class Visualizer {
       ctx.stroke();
       ctx.setLineDash([]);
 
+      // Draw output labels
       if (outputLabels[i]) {
         ctx.beginPath();
         ctx.textAlign = "center";
@@ -94,6 +104,7 @@ class Visualizer {
   }
 
   static #getNodeX(nodes, index, left, right) {
+    // Helper function to calculate the X position of a node within a level
     return lerp(
       left,
       right,
