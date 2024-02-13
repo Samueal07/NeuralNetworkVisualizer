@@ -35,7 +35,6 @@ class Road {
   draw(ctx) {
     ctx.lineWidth = 5;
     ctx.strokeStyle = "white";
-
     //making dashed lines linear interpolation function in util.js
     // 'i / this.laneCount' ensures that 't' is between 0 and 1 as 'i' varies from 1 to (this.laneCount - 1)
     for (let i = 1; i <= this.laneCount - 1; i++) {
@@ -44,7 +43,6 @@ class Road {
       // dash will have 20 pixels width then 20 pixels break
       ctx.setLineDash([20, 20]);
       ctx.beginPath();
-      // drawing a vertical line
       ctx.moveTo(x, this.top);
       ctx.lineTo(x, this.bottom);
       ctx.stroke();

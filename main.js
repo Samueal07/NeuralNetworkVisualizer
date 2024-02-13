@@ -1,23 +1,21 @@
 const carCanvas = document.getElementById("carCanvas");
 carCanvas.width = 200;
-
 const networkCanvas = document.getElementById("networkCanvas");
 networkCanvas.width = 300;
-
 // getting a 2d context for making car
 const carCtx = carCanvas.getContext("2d");
 const networkCtx = networkCanvas.getContext("2d");
+
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 // Car Class and draw method in Car.js
 // const car = new Car(road.getLaneCenter(1), 100, 30, 50, "KEYS");
 const car = new Car(road.getLaneCenter(1), 100, 30, 50, "AI");
 // to check if the car comes in middle of lane
 // const car = new Car(road.getLaneCenter(2), 100, 30, 50);
-
 const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)];
 // car.draw(carCtx);
-
 animate();
+
 function animate(time) {
   // calling it again and again so that it rerenders its position
   // prop dirlling till sensor.js main->car->sensor->castRays
@@ -28,11 +26,11 @@ function animate(time) {
 
   carCanvas.height = window.innerHeight;
   networkCanvas.height = window.innerHeight;
-
   // camera view for a moving car
   carCtx.save();
   // ctx.translate(0, -car.y);
   carCtx.translate(0, -car.y + carCanvas.height * 0.7);
+
   road.draw(carCtx);
   for (let i = 0; i < traffic.length; i++) {
     traffic[i].draw(carCtx, "red");
@@ -40,6 +38,7 @@ function animate(time) {
   car.draw(carCtx, "blue");
 
   carCtx.restore();
+
   networkCtx.lineDashOffset = -time / 50;
   Visualizer.drawNetwork(networkCtx, car.brain);
   requestAnimationFrame(animate);

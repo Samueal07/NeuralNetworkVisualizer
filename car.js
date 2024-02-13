@@ -11,7 +11,9 @@ class Car {
     this.friction = 0.05;
     // making this because we are getting speed>3 when going diagonally
     this.angle = 0;
-    this.useBrain = controlType === "AI";
+    this.damaged = false;
+
+    this.useBrain = controlType == "AI";
 
     if (controlType != "DUMMY") {
       // making an instance of class Sensor
@@ -22,22 +24,20 @@ class Car {
       this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
     }
     this.controls = new Controls(controlType);
-
-    this.damaged = false;
   }
 
-  update(roadBoarders, traffic) {
+  update(roadBorders, traffic) {
     if (!this.damaged) {
       this.#move();
       this.polygon = this.#createPolygon();
-      this.damaged = this.#assessDamage(roadBoarders, traffic);
+      this.damaged = this.#assessDamage(roadBorders, traffic);
     }
     if (this.sensor) {
-      this.sensor.update(roadBoarders, traffic);
+      this.sensor.update(roadBorders, traffic);
       const offsets = this.sensor.readings.map(
         // if their isnt anything in way of sensor keep value as zero
         // else deduct the offset value from 1
-        (s) => (s == null ? 0 : 1 - s.offsets)
+        (s) => (s == null ? 0 : 1 - s.offset)
       );
       const outputs = NeuralNetwork.feedForward(offsets, this.brain);
       console.log(outputs);
@@ -67,6 +67,7 @@ class Car {
     }
     return false;
   }
+
   #createPolygon() {
     const points = [];
     const rad = Math.hypot(this.width, this.height) / 2;
@@ -92,9 +93,9 @@ class Car {
       x: this.x - Math.sin(Math.PI + this.angle + alpha) * rad,
       y: this.y - Math.cos(Math.PI + this.angle + alpha) * rad,
     });
-
     return points;
   }
+
   #move() {
     if (this.controls.forward) {
       // on windows y value increases downwards
@@ -156,20 +157,17 @@ class Car {
 
     // updated code to draw the car with drowing actual polygon to detect
     // collision as well
-
     if (this.damaged) {
       ctx.fillStyle = "gray";
     } else {
       ctx.fillStyle = color;
     }
     ctx.beginPath();
-    if (this.polygon && this.polygon.length > 0) {
-      ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
-      for (let i = 1; i < this.polygon.length; i++) {
-        ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
-      }
-      ctx.fill();
+    ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
+    for (let i = 1; i < this.polygon.length; i++) {
+      ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
     }
+    ctx.fill();
     // only car controlled by us woudl have senosr
     if (this.sensor) {
       this.sensor.draw(ctx);

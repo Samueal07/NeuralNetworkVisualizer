@@ -1,6 +1,3 @@
-// the equation for 1 connection is a slope
-// weight controlling slope and bais controlling y intercept
-
 // if two sensors connected to same neuron we then have a plane
 // w0s0+w1s1+b=0
 class NeuralNetwork {
@@ -11,21 +8,18 @@ class NeuralNetwork {
       this.levels.push(new Level(neuronCounts[i], neuronCounts[i + 1]));
     }
   }
-  static feedForward(givenInputs, network) {
-    if (network.levels) {
-      // calling first level to give its output
-      let outputs = Level.feedForward(givenInputs, network.levels[0]);
-      // for the further levels
-      for (let i = 1; i < network.levels.length; i++) {
-        // putting the output of prev level as input in the next level
-        outputs = Level.feedForward(outputs, network.levels[i]);
-      }
 
-      return outputs;
-      w;
+  static feedForward(givenInputs, network) {
+    // calling first level to give its output
+    let outputs = Level.feedForward(givenInputs, network.levels[0]);
+    // putting the output of prev level as input in the next level
+    for (let i = 1; i < network.levels.length; i++) {
+      outputs = Level.feedForward(outputs, network.levels[i]);
     }
+    return outputs;
   }
 }
+
 class Level {
   constructor(inputCount, outputCount) {
     // we get the input from  car sensors
@@ -35,25 +29,20 @@ class Level {
     this.biases = new Array(outputCount);
 
     this.weights = [];
-
+    // for each input we will have outputCount no of Connection
     for (let i = 0; i < inputCount; i++) {
-      // for each input we will have outputCount no of Connection
       this.weights[i] = new Array(outputCount);
     }
-
     // making a random brain
     Level.#randomize(this);
   }
-  // we want to serialize this oject so using static (method dont serialize)
+  // we want to native to the class only and not the object
   static #randomize(level) {
-    // initializing random weights
     for (let i = 0; i < level.inputs.length; i++) {
       for (let j = 0; j < level.outputs.length; j++) {
-        // value between 0 and 1
         level.weights[i][j] = Math.random() * 2 - 1;
       }
     }
-
     // initializing random baises
     for (let i = 0; i < level.biases.length; i++) {
       level.biases[i] = Math.random() * 2 - 1;
@@ -67,7 +56,6 @@ class Level {
       level.inputs[i] = givenInputs[i];
     }
 
-    //to decide the value of output layer
     for (let i = 0; i < level.outputs.length; i++) {
       let sum = 0;
       for (let j = 0; j < level.inputs.length; j++) {

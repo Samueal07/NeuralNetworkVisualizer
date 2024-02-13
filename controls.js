@@ -1,12 +1,11 @@
 class Controls {
-  constructor(controlType) {
+  constructor(type) {
     this.forward = false;
     this.left = false;
     this.right = false;
     this.reverse = false;
-
     // # means its a private method
-    switch (controlType) {
+    switch (type) {
       case "KEYS":
         this.#addKeyboardListeners();
         break;
@@ -34,7 +33,6 @@ class Controls {
       }
       //   console.table(this);
     };
-
     document.onkeyup = (event) => {
       switch (event.key) {
         case "ArrowLeft":
@@ -50,7 +48,6 @@ class Controls {
           this.reverse = false;
           break;
       }
-      //   console.table(this);
     };
   }
 }
