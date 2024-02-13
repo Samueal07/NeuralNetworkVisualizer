@@ -1,10 +1,11 @@
 body {
   margin: 0;
-  background: darkgray;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #ffffff;
+  font-family: "Arial", sans-serif;
 }
 
 #verticalButtons {
@@ -28,4 +29,13 @@ button:hover {
 }
 #carCanvas {
   background: lightgray;
+}
+
+#header {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 20px;
+  color: #333333;
+  margin-right: 5%;
+  font-weight: bold;
 }
