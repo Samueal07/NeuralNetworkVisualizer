@@ -12,12 +12,43 @@ const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 // const car = new Car(road.getLaneCenter(1), 100, 30, 50, "AI");
 const N = 100;
 const cars = generateCars(N);
+let bestCar = cars[0];
+
+// loading car from local Storage
+if (localStorage.getItem("bestBrain")) {
+  // parsing the JSON string we stored previously
+  // looping thrihg all cars
+  for (let i = 0; i < cars.length; i++) {
+    // for each cars its brain will become to that of best brain
+    cars[i].brain = JSON.parse(localStorage.getItem("bestBrain"));
+    // for all other ones other that bestbrain mutate the brain's neural network
+    if (i != 0) {
+      NeuralNetwork.mutate(cars[i].brain, 0.4);
+    }
+  }
+}
 // to check if the car comes in middle of lane
 // const car = new Car(road.getLaneCenter(2), 100, 30, 50);
-const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2)];
+const traffic = [
+  new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(1), -700, 30, 50, "DUMMY", 2),
+  new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2),
+];
 // car.draw(carCtx);
 animate();
 
+// function to save the successful attempt on to local storage
+function save() {
+  localStorage.setItem("bestBrain", JSON.stringify(bestCar.brain));
+}
+
+function discard() {
+  localStorage.removeItem("bestBrain");
+}
 function generateCars(N) {
   const cars = [];
   for (let i = 0; i < N; i++) {
